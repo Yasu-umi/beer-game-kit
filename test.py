@@ -8,7 +8,7 @@ class UserClient:
         self.id = id
 
     def action(self, unit, order):
-        print("pleese type next order")
+        print("please type next order")
         print("id: {} unit: {}".format(self.id, unit))
         user_input = self.get_input_int()
         print("id: {} next order: {}".format(self.id, user_input))
@@ -20,7 +20,7 @@ class UserClient:
             parsed_input = int(user_input)
             return parsed_input
         except:
-            print("pleese type int")
+            print("please type int")
             return self.get_input_int()
 
 if __name__ == "__main__":

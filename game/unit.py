@@ -1,25 +1,26 @@
 # -*- coding: utf-8 -*-
 import random
 from abc import ABCMeta, abstractmethod
+from typing import Optional
 
-from .constants import *
+from constants import *
 
 
 class Unit(metaclass=ABCMeta):
     @abstractmethod
-    def step1(self, transport):
+    def step1(self, transport: int) -> Optional[int]:
         return transport
 
     @abstractmethod
-    def step2(self, order):
+    def step2(self, order: int) -> Optional[int]:
         return order
 
     @abstractmethod
-    def step3(self, transport):
+    def step3(self, transport: int) -> Optional[int]:
         return transport
 
     @abstractmethod
-    def step4(self, order):
+    def step4(self, order: int) -> Optional[int]:
         return order
 
 
@@ -37,17 +38,17 @@ class PlayerUnit(Unit):
     def __init__(self, client):
         self.client = client
 
-    def step1(self, transport):
+    def step1(self, transport: int) -> Optional[int]:
         if transport is not None:
             self.transport = transport
         return None
 
-    def step2(self, order):
+    def step2(self, order: int) -> Optional[int]:
         if order is not None:
             self.order = order
         return None
 
-    def step3(self, transport):
+    def step3(self, transport: int) -> Optional[int]:
         next_backlog = (self.order + self.backlog) - (self.inventory + self.transport)
         if next_backlog > 0:
             next_transport = self.inventory + self.transport
@@ -64,7 +65,7 @@ class PlayerUnit(Unit):
             self.backlog = 0
             return next_transport
     
-    def step4(self, order):
+    def step4(self, order: int) -> Optional[int]:
         next_order = self.client.action(self, order)
         return next_order
 
@@ -84,7 +85,7 @@ class DelayUnit(Unit):
     transport = DELAY_TRANSPORT_INITIAL
     order = 0
 
-    def step1(self, transport):
+    def step1(self, transport: int) -> Optional[None]:
         if transport is not None:
             next_transport = self.transport
             self.transport = transport
@@ -92,17 +93,17 @@ class DelayUnit(Unit):
         else:
             return None
 
-    def step2(self, order):
+    def step2(self, order: int) -> Optional[None]:
         next_order = self.order
         if order is not None:
             self.order = order
         return next_order
 
-    def step3(self, transport):
+    def step3(self, transport: int) -> Optional[int]:
         self.transport += transport
         return 0
 
-    def step4(self, order):
+    def step4(self, order: int) -> Optional[int]:
         if order is not None:
             self.order = order
         return None
