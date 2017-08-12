@@ -12,7 +12,7 @@ class Master:
 
     units = []
 
-    def __init__(self, *units: List['Unit']) -> None:
+    def __init__(self, *units: 'Unit') -> None:
         self.units = list(units)
 
     def step1(self) -> None:

@@ -72,7 +72,7 @@ class PlayerUnit(Unit):
             return next_transport
     
     def step4(self, order: int) -> Optional[int]:
-        next_order = self.client.action(self, order)
+        next_order = self.client.action(self, order, None) #TODO: replace None with Observation
         return next_order
 
     def calc_cost(self):
@@ -95,7 +95,7 @@ class DelayUnit(Unit):
     def inventories(self):
         return [self.inventory]
 
-    def step1(self, transport: int) -> Optional[None]:
+    def step1(self, transport: int) -> Optional[int]:
         if transport is not None:
             next_transport = self.inventory
             self.inventory = transport
@@ -103,7 +103,7 @@ class DelayUnit(Unit):
         else:
             return None
 
-    def step2(self, order: int) -> Optional[None]:
+    def step2(self, order: int) -> Optional[int]:
         next_order = self.order
         if order is not None:
             self.order = order
