@@ -72,6 +72,7 @@ class PlayerUnit(Unit):
     
     def step4(self, order):
         next_order = self.client.action(self, order)
+        self.calc_cost()
         return next_order
 
     def calc_cost(self):
