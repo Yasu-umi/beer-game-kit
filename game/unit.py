@@ -73,6 +73,7 @@ class PlayerUnit(Unit):
     
     def step4(self, order: int) -> Optional[int]:
         next_order = self.client.action(self, order, None) #TODO: replace None with Observation
+        self.calc_cost()
         return next_order
 
     def calc_cost(self):
