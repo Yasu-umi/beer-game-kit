@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import random
 from abc import ABCMeta, abstractmethod
+from typing import Optional
 
 from .constants import *
 
@@ -12,19 +13,19 @@ class Unit(metaclass=ABCMeta):
         return []
 
     @abstractmethod
-    def step1(self, transport):
+    def step1(self, transport: int) -> Optional[int]:
         return transport
 
     @abstractmethod
-    def step2(self, order):
+    def step2(self, order: int) -> Optional[int]:
         return order
 
     @abstractmethod
-    def step3(self, transport):
+    def step3(self, transport: int) -> Optional[int]:
         return transport
 
     @abstractmethod
-    def step4(self, order):
+    def step4(self, order: int) -> Optional[int]:
         return order
 
 
@@ -45,17 +46,17 @@ class PlayerUnit(Unit):
     def __init__(self, client):
         self.client = client
 
-    def step1(self, transport):
+    def step1(self, transport: int) -> Optional[int]:
         if transport is not None:
             self.inventory += transport
         return None
 
-    def step2(self, order):
+    def step2(self, order: int) -> Optional[int]:
         if order is not None:
             self.order = order
         return None
 
-    def step3(self, transport):
+    def step3(self, transport: int) -> Optional[int]:
         next_backlog = self.order + self.backlog - self.inventory
         if next_backlog > 0:
             next_transport = self.inventory
@@ -70,8 +71,8 @@ class PlayerUnit(Unit):
             self.backlog = 0
             return next_transport
     
-    def step4(self, order):
-        next_order = self.client.action(self, order)
+    def step4(self, order: int) -> Optional[int]:
+        next_order = self.client.action(self, order, None) #TODO: replace None with Observation
         self.calc_cost()
         return next_order
 
@@ -95,7 +96,7 @@ class DelayUnit(Unit):
     def inventories(self):
         return [self.inventory]
 
-    def step1(self, transport):
+    def step1(self, transport: int) -> Optional[int]:
         if transport is not None:
             next_transport = self.inventory
             self.inventory = transport
@@ -103,17 +104,17 @@ class DelayUnit(Unit):
         else:
             return None
 
-    def step2(self, order):
+    def step2(self, order: int) -> Optional[int]:
         next_order = self.order
         if order is not None:
             self.order = order
         return next_order
 
-    def step3(self, transport):
+    def step3(self, transport: int) -> Optional[int]:
         self.inventory += transport
         return 0
 
-    def step4(self, order):
+    def step4(self, order: int) -> Optional[int]:
         if order is not None:
             self.order = order
         return None
@@ -146,7 +147,7 @@ class ManufacturerUnit(Unit):
 
     @property
     def inventories(self):
-        return [inventory_1, inventory_2]
+        return [self.inventory_1, self.inventory_2]
 
     def step1(self, _):
         next_transport = self.inventory_1

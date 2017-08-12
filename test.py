@@ -1,33 +1,15 @@
 # -*- coding: utf-8 -*-
+from game.client import UserClient, EchoClient
 from game.master import Master
 from game.unit import PlayerUnit, DelayUnit, ManufacturerUnit, CustomerUnit
 
 
-class UserClient:
-    def __init__(self, id=0):
-        self.id = id
-
-    def action(self, unit, order):
-        print("pleese type next order")
-        print("id: {} unit: {}".format(self.id, unit))
-        user_input = self.get_input_int()
-        print("id: {} next order: {}".format(self.id, user_input))
-        return user_input
-
-    def get_input_int(self):
-        user_input = input()
-        try:
-            parsed_input = int(user_input)
-            return parsed_input
-        except:
-            print("pleese type int")
-            return self.get_input_int()
 
 if __name__ == "__main__":
-    unit0 = PlayerUnit(client=UserClient(id=0))
-    unit1 = PlayerUnit(client=UserClient(id=1))
-    unit2 = PlayerUnit(client=UserClient(id=2))
-    unit3 = PlayerUnit(client=UserClient(id=3))
+    unit0 = PlayerUnit(client=EchoClient(id=0))
+    unit1 = PlayerUnit(client=EchoClient(id=1))
+    unit2 = PlayerUnit(client=EchoClient(id=2))
+    unit3 = PlayerUnit(client=EchoClient(id=3))
 
     delay_unit0 = DelayUnit()
     delay_unit1 = DelayUnit()
