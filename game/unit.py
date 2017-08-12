@@ -3,7 +3,7 @@ import random
 from abc import ABCMeta, abstractmethod
 from typing import Optional
 
-from constants import *
+from .constants import *
 
 
 class Unit(metaclass=ABCMeta):

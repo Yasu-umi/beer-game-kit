@@ -2,15 +2,17 @@
 from typing import List
 
 from .constants import *
-from .unit import Unit, DelayUnit, ManufacturerUnit
-
+from .unit import DelayUnit, ManufacturerUnit
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .unit import Unit
 
 class Master:
     current_round_index = 0
 
     units = []
 
-    def __init__(self, *units: List[Unit]) -> None:
+    def __init__(self, *units: List['Unit']) -> None:
         self.units = list(units)
 
     def step1(self) -> None:
