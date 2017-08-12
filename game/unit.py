@@ -87,7 +87,7 @@ class PlayerUnit(Unit):
 
 
 class DelayUnit(Unit):
-    inventory = DELAY_TRANSPORT_INITIAL
+    inventory = DELAY_INVENTORY_INITIAL
     order = 0
 
     @property
@@ -138,8 +138,8 @@ class CustomerUnit(Unit):
 
 
 class ManufacturerUnit(Unit):
-    inventory_1 = 0
-    inventory_2 = 0
+    inventory_1 = DELAY_INVENTORY_INITIAL
+    inventory_2 = DELAY_INVENTORY_INITIAL
 
     order = 0
 
