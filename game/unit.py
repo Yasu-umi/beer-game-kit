@@ -6,6 +6,11 @@ from .constants import *
 
 
 class Unit(metaclass=ABCMeta):
+    @property
+    @abstractmethod
+    def inventories(self):
+        return []
+
     @abstractmethod
     def step1(self, transport):
         return transport
@@ -24,7 +29,6 @@ class Unit(metaclass=ABCMeta):
 
 
 class PlayerUnit(Unit):
-    transport = 0
     order = 0
 
     backlog = 0
@@ -34,12 +38,16 @@ class PlayerUnit(Unit):
 
     client = None
 
+    @property
+    def inventories(self):
+        return [self.transport]
+
     def __init__(self, client):
         self.client = client
 
     def step1(self, transport):
         if transport is not None:
-            self.transport = transport
+            self.inventory += transport
         return None
 
     def step2(self, order):
@@ -48,17 +56,15 @@ class PlayerUnit(Unit):
         return None
 
     def step3(self, transport):
-        next_backlog = (self.order + self.backlog) - (self.inventory + self.transport)
+        next_backlog = self.order + self.backlog - self.inventory
         if next_backlog > 0:
-            next_transport = self.inventory + self.transport
-            self.transport = 0
+            next_transport = self.inventory
             self.inventory = 0
             self.order = 0
             self.backlog = next_backlog
             return next_transport
         else:
             next_transport = self.order + self.backlog
-            self.transport = 0
             self.inventory = -next_backlog
             self.order = 0
             self.backlog = 0
@@ -75,19 +81,23 @@ class PlayerUnit(Unit):
         return order
 
     def __repr__(self):
-        return "transport: {}, order: {}, backlog: {}, inventory: {}, cost: {}".format(
-            self.transport, self.order, self.backlog, self.inventory, self.cost
+        return "order: {}, backlog: {}, inventory: {}, cost: {}".format(
+            self.order, self.backlog, self.inventory, self.cost
         )
 
 
 class DelayUnit(Unit):
-    transport = DELAY_TRANSPORT_INITIAL
+    inventory = DELAY_TRANSPORT_INITIAL
     order = 0
+
+    @property
+    def inventories(self):
+        return [self.inventory]
 
     def step1(self, transport):
         if transport is not None:
-            next_transport = self.transport
-            self.transport = transport
+            next_transport = self.inventory
+            self.inventory = transport
             return next_transport
         else:
             return None
@@ -99,7 +109,7 @@ class DelayUnit(Unit):
         return next_order
 
     def step3(self, transport):
-        self.transport += transport
+        self.inventory += transport
         return 0
 
     def step4(self, order):
@@ -109,6 +119,10 @@ class DelayUnit(Unit):
 
 
 class CustomerUnit(Unit):
+    @property
+    def inventories(self):
+        return []
+
     def step1(self, _):
         return None
 
@@ -124,15 +138,19 @@ class CustomerUnit(Unit):
 
 
 class ManufacturerUnit(Unit):
-    transport_1 = 0
-    transport_2 = 0
+    inventory_1 = 0
+    inventory_2 = 0
 
     order = 0
 
+    @property
+    def inventories(self):
+        return [inventory_1, inventory_2]
+
     def step1(self, _):
-        next_transport = self.transport_1
-        self.transport_1 = self.transport_2
-        self.transport_2 = self.order
+        next_transport = self.inventory_1
+        self.inventory_1 = self.inventory_2
+        self.inventory_2 = self.order
         self.order = 0
         return next_transport
 
